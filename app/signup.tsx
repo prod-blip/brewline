@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors, Fonts, Radius, Spacing, Typography } from '../constants/theme';
 import { Button } from '../components/ui/Button';
 import { createSignup } from '../lib/signups';
+import { useResponsive } from '../hooks/useResponsive';
 
 const plans = ['Discovery', 'Connoisseur', 'Bean Hunter'] as const;
 type Plan = typeof plans[number];
@@ -26,6 +27,7 @@ export default function SignupScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ plan?: string }>();
   const initialPlan = useMemo(() => normalizePlan(params.plan), [params.plan]);
+  const { isMobile } = useResponsive();
 
   const [plan, setPlan] = useState<Plan>(initialPlan);
   const [name, setName] = useState('');
@@ -102,7 +104,7 @@ export default function SignupScreen() {
 
       <View style={styles.formCard}>
         <Text style={styles.sectionLabel}>Choose plan</Text>
-        <View style={styles.planGrid}>
+        <View style={[styles.planGrid, isMobile && styles.planGridMobile]}>
           {plans.map((item) => {
             const selected = item === plan;
 
@@ -110,7 +112,11 @@ export default function SignupScreen() {
               <Pressable
                 key={item}
                 onPress={() => setPlan(item)}
-                style={[styles.planOption, selected && styles.planOptionSelected]}
+                style={[
+                  styles.planOption,
+                  isMobile && styles.planOptionMobile,
+                  selected && styles.planOptionSelected,
+                ]}
               >
                 <Text style={[styles.planName, selected && styles.planNameSelected]}>{item}</Text>
                 <Text style={[styles.planHint, selected && styles.planHintSelected]}>
@@ -282,6 +288,10 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 28,
   },
+  planGridMobile: {
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+  },
   planOption: {
     flexGrow: 1,
     flexBasis: 180,
@@ -295,6 +305,10 @@ const styles = StyleSheet.create({
         cursor: 'pointer',
       },
     }),
+  },
+  planOptionMobile: {
+    width: '100%',
+    flexBasis: 'auto',
   },
   planOptionSelected: {
     backgroundColor: Colors.espresso,
