@@ -4,7 +4,8 @@ import WebSocket from 'ws';
 import type { WebSocketLikeConstructor } from '@supabase/realtime-js';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabasePublishableKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const supabasePublishableKey =
+  process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.EXPO_PUBLIC_SUPABASE_KEY;
 
 export const hasSupabaseConfig = Boolean(supabaseUrl && supabasePublishableKey);
 

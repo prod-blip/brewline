@@ -35,6 +35,7 @@ export default function SignupScreen() {
   const [brewSetup, setBrewSetup] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const emailIsValid = /\S+@\S+\.\S+/.test(email.trim());
   const canSubmit = name.trim().length > 1 && emailIsValid && city.trim().length > 1;
@@ -47,6 +48,7 @@ export default function SignupScreen() {
 
     try {
       setSubmitting(true);
+      setSubmitError('');
       await createSignup({
         plan,
         name,
@@ -58,6 +60,7 @@ export default function SignupScreen() {
       setSubmitted(true);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Please try again in a moment.';
+      setSubmitError(message);
       Alert.alert('Could not save signup', message);
     } finally {
       setSubmitting(false);
@@ -170,6 +173,7 @@ export default function SignupScreen() {
           loading={submitting}
           style={styles.submitButton}
         />
+        {submitError ? <Text style={styles.errorText}>{submitError}</Text> : null}
         <Text style={styles.microcopy}>
           No payment now. We will confirm your roast preference and address before checkout.
         </Text>
@@ -337,6 +341,14 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 28,
+  },
+  errorText: {
+    fontFamily: Fonts.bodyMedium,
+    fontSize: 13,
+    lineHeight: 20,
+    color: Colors.terracotta,
+    textAlign: 'center',
+    marginTop: 12,
   },
   microcopy: {
     fontFamily: Fonts.body,
